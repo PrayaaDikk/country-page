@@ -1,23 +1,18 @@
 "use client";
-import { useRef, useState } from "react";
-import { Listbox } from "@headlessui/react";
+import { useRef, useState, useEffect } from "react";
+import {
+	Listbox,
+	ListboxButton,
+	ListboxOptions,
+	ListboxOption,
+} from "@headlessui/react";
 
 export default function Home() {
 	const sortList = ["population", "area", "name"];
-	const [isOpenDropDown, setIsOpenDropDown] = useState(false);
 	const [selectedOption, setSelectedOption] = useState(sortList[0]);
-	const sortListRef = useRef([]);
-
-	const handleClick = (option) => {
-		setSelectedOption(option);
-	};
-
-	const capitalizeFirstLetter = (string) => {
-		return string.charAt(0).toUpperCase() + string.slice(1);
-	};
 
 	return (
-		<div className="relative overflow-hidden">
+		<div className="relative overflow-hidden h-[1000px]">
 			<img
 				src="resources/hero-image.jpg"
 				alt="hero-background"
@@ -49,69 +44,37 @@ export default function Home() {
 					</label>
 				</div>
 				<div className="mt-8">
-					<div className="">
-						<div className="grid gap-2">
-							<p className="block text-grayTheme text-xs font-semibold">
-								Sort by
-							</p>
-							<div>
-								{/* dropdown */}
-								{/* <span className="flex items-center justify-between text-whiteTheme text-sm bg-none rounded-2xl p-4 border-2 border-blackTheme2 ">
-									<p className="capitalize">
+					<div className="grid gap-2">
+						<p className="block text-grayTheme text-xs font-semibold">
+							Sort by
+						</p>
+						{/* dropdown */}
+						<div className="relative">
+							<Listbox
+								value={selectedOption}
+								onChange={setSelectedOption}
+							>
+								<ListboxButton className="w-full px-3 py-2 border-2 border-blackTheme2 rounded-xl flex items-center justify-between ">
+									<p className="text-whiteTheme text-sm capitalize">
 										{selectedOption}
 									</p>
 									<img
 										src="resources/Expand_down.svg"
-										alt="drop-down-icon"
-										className="cursor-pointer"
-										onClick={() =>
-											setIsOpenDropDown(!isOpenDropDown)
-										}
+										alt="dropdown-icon"
 									/>
-								</span>
-								<div
-									className={`bg-blackTheme2 rounded-xl p-1 `}
-								>
+								</ListboxButton>
+								<ListboxOptions className="absolute w-full bg-blackTheme2 rounded-xl shadow text-sm text-whiteTheme p-1 mt-1 ">
 									{sortList.map((option, i) => (
-										<span
-											className="block text-left text-whiteTheme text-sm capitalize p-4 active:bg-blackTheme cursor-pointer rounded-xl lg:hover:bg-blackTheme"
+										<ListboxOption
+											value={option}
 											key={i}
-											ref={(el) =>
-												(sortListRef.current[i] = el)
-											}
-											onClick={() => handleClick(option)}
+											className="block px-3 py-2 cursor-pointer capitalize active:bg-blackTheme rounded-lg"
 										>
 											{option}
-										</span>
+										</ListboxOption>
 									))}
-								</div> */}
-
-								{/* dropdown */}
-								<div>
-									<Listbox>
-										<Listbox.Button className="w-full p-4 border-2 border-blackTheme2 rounded-xl flex items-center justify-between ">
-											<p className="text-whiteTheme text-sm capitalize">
-												{selectedOption}
-											</p>
-											<img
-												src="resources/Expand_down.svg"
-												alt="dropdown-icon"
-											/>
-										</Listbox.Button>
-										<Listbox.Options className="absolute w-full bg-blackTheme2 rounded-xl shadow text-sm text-whiteTheme p-1 mt-1 ">
-											{sortList.map((option, i) => (
-												<Listbox.Option
-													value={option}
-													key={i}
-													className="block p-4 cursor-pointer capitalize active:bg-blackTheme "
-												>
-													{option}
-												</Listbox.Option>
-											))}
-										</Listbox.Options>
-									</Listbox>
-								</div>
-							</div>
+								</ListboxOptions>
+							</Listbox>
 						</div>
 					</div>
 					<div></div>
