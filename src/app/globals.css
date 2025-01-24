@@ -12,3 +12,10 @@ body {
   background: var(--background);
   font-family: var(--font-beVietnamPro);
 }
+
+select option {
+  max-width: 100%;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
