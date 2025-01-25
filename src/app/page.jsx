@@ -8,8 +8,30 @@ import {
 } from "@headlessui/react";
 
 export default function Home() {
-	const sortList = ["population", "area", "name"];
-	const [selectedOption, setSelectedOption] = useState(sortList[0]);
+	const optionList = ["population", "area", "name"];
+	const regionList = [
+		"americas",
+		"antarctic",
+		"africa",
+		"asia",
+		"europe",
+		"ocenia",
+	];
+	const [activeRegion, setActiveRegion] = useState([
+		"americas",
+		"africa",
+		"asia",
+		"europe",
+	]);
+	const [selectedOption, setSelectedOption] = useState(optionList[0]);
+
+	const handleActiveRegion = (region) => {
+		setActiveRegion((prevRegion) => {
+			return prevRegion.includes(region)
+				? prevRegion.filter((item) => item !== region)
+				: [...prevRegion, region];
+		});
+	};
 
 	return (
 		<div className="relative overflow-hidden h-[1000px]">
@@ -43,12 +65,12 @@ export default function Home() {
 						/>
 					</label>
 				</div>
-				<div className="mt-8">
-					<div className="grid gap-2">
-						<p className="block text-grayTheme text-xs font-semibold">
+				<div className="grid">
+					{/* dropdown */}
+					<div className="grid gap-y-2 mt-8">
+						<p className="text-grayTheme text-xs font-semibold">
 							Sort by
 						</p>
-						{/* dropdown */}
 						<div className="relative">
 							<Listbox
 								value={selectedOption}
@@ -64,7 +86,7 @@ export default function Home() {
 									/>
 								</ListboxButton>
 								<ListboxOptions className="absolute w-full bg-blackTheme2 rounded-xl shadow text-sm text-whiteTheme p-1 mt-1 ">
-									{sortList.map((option, i) => (
+									{optionList.map((option, i) => (
 										<ListboxOption
 											value={option}
 											key={i}
@@ -77,7 +99,28 @@ export default function Home() {
 							</Listbox>
 						</div>
 					</div>
-					<div></div>
+
+					{/* region category */}
+					<div className="mt-8 grid gap-y-2 ">
+						<p className="text-grayTheme text-xs font-semibold">
+							Region
+						</p>
+						<div className="flex flex-wrap gap-4">
+							{regionList.map((region) => (
+								<button
+									className={`px-3 py-2 text-whiteTheme text-sm rounded-xl capitalize ${
+										activeRegion.includes(region)
+											? "bg-blackTheme2"
+											: ""
+									} `}
+									key={region}
+									onClick={() => handleActiveRegion(region)}
+								>
+									{region}
+								</button>
+							))}
+						</div>
+					</div>
 				</div>
 			</section>
 		</div>
