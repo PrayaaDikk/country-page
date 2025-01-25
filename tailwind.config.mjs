@@ -13,7 +13,7 @@ export default {
 				blackTheme: "#1B1D1F",
 				blackTheme2: "#282B30",
 				grayTheme: "#6C727F",
-				blueSky: "#4E80EE",
+				blueTheme: "#4E80EE",
       },
     },
   },

@@ -24,17 +24,63 @@ export default function Home() {
 		"europe",
 	]);
 	const [selectedOption, setSelectedOption] = useState(optionList[0]);
+	const [activeRegionUrls, setActiveRegionUrls] = useState([
+		activeRegion.map(
+			(region) => `https://restcountries.com/v3.1/region/${region}`
+		),
+	]);
+	const [countriesStatus, setCountriesStatus] = useState(["independent"]);
+	const [country, setCountry] = useState([]);
+
+	useEffect(() => {
+		const fetchData = async () => {
+			try {
+				const res = await fetch(
+					"https://restcountries.com/v3.1/region/asia"
+				);
+				const data = await res.json();
+				setCountry(data);
+			} catch (err) {
+				console.log("Error: ", err);
+			}
+		};
+		fetchData();
+	}, []);
 
 	const handleActiveRegion = (region) => {
-		setActiveRegion((prevRegion) => {
-			return prevRegion.includes(region)
+		setActiveRegion((prevRegion) =>
+			prevRegion.includes(region)
 				? prevRegion.filter((item) => item !== region)
-				: [...prevRegion, region];
-		});
+				: [...prevRegion, region]
+		);
+		setActiveRegionUrls((prevUrls) =>
+			prevUrls.includes(`https://restcountries.com/v3.1/region/${region}`)
+				? prevUrls.filter(
+						(item) =>
+							item !==
+							`https://restcountries.com/v3.1/region/${region}`
+				  )
+				: [
+						...prevUrls,
+						`https://restcountries.com/v3.1/region/${region}`,
+				  ]
+		);
+	};
+
+	const handleCountriesStatus = (status) => {
+		setCountriesStatus((prevStatus) =>
+			prevStatus.includes(status)
+				? prevStatus.filter((item) => item !== status)
+				: [...prevStatus, status]
+		);
+	};
+
+	const formattedNumber = (number) => {
+		return new Intl.NumberFormat("en-US").format(number);
 	};
 
 	return (
-		<div className="relative overflow-hidden h-[1000px]">
+		<div className="relative overflow-x-hidden overflow-y-scroll h-[1000px]">
 			<img
 				src="resources/hero-image.jpg"
 				alt="hero-background"
@@ -120,6 +166,85 @@ export default function Home() {
 								</button>
 							))}
 						</div>
+					</div>
+
+					{/* country status */}
+					<div className="grid gap-y-2 mt-8">
+						<p className="text-grayTheme text-xs font-semibold">
+							Status
+						</p>
+						<div
+							className="flex items-center gap-2"
+							onClick={() => handleCountriesStatus("unMember")}
+						>
+							<span
+								className={`border-2 border-whiteTheme rounded-md ${
+									countriesStatus.includes("unMember")
+										? "bg-blueTheme border-blueTheme"
+										: "border-whiteTheme [&>img]:opacity-0"
+								}`}
+							>
+								<img src="resources/Done_round.svg" />
+							</span>
+							<label
+								htmlFor="unMemberCheckbox"
+								className="text-whiteTheme text-sm"
+							>
+								Member of the United Nations
+							</label>
+						</div>
+						<div
+							className="flex items-center gap-2"
+							onClick={() => handleCountriesStatus("independent")}
+						>
+							<span
+								className={`border-2 rounded-md ${
+									countriesStatus.includes("independent")
+										? "bg-blueTheme border-blueTheme"
+										: "border-whiteTheme [&>img]:opacity-0"
+								}`}
+							>
+								<img src="resources/Done_round.svg" />
+							</span>
+							<label
+								htmlFor="independentCheckbox"
+								className="text-whiteTheme text-sm"
+							>
+								Independent
+							</label>
+						</div>
+					</div>
+
+					{/* country list */}
+					<div>
+						<table className="text-left text-whiteTheme [&>thead>tr>th]:py-1 [&>tbody>tr>td]:py-2 ">
+							<thead className="text-grayTheme text-xs">
+								<tr className="[&>th:not(:first-child)]:min-w-[150px]">
+									<th className="min-w-[100px]">Flag</th>
+									<th>Name</th>
+									<th>Populations</th>
+									<th>Area</th>
+								</tr>
+							</thead>
+							<tbody>
+								{country.map((item) => (
+									<tr key={item.name.common.toLowerCase()}>
+										<td>
+											<img
+												src={item.flags.svg}
+												alt={item.flags.alt}
+												className="w-[50px] rounded-md"
+											/>
+										</td>
+										<td>{item.name.common}</td>
+										<td>
+											{formattedNumber(item.population)}
+										</td>
+										<td>{formattedNumber(item.area)}</td>
+									</tr>
+								))}
+							</tbody>
+						</table>
 					</div>
 				</div>
 			</section>
