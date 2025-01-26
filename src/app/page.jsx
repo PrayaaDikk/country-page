@@ -24,11 +24,6 @@ export default function Home() {
 		"europe",
 	]);
 	const [selectedOption, setSelectedOption] = useState(optionList[0]);
-	const [activeRegionUrls, setActiveRegionUrls] = useState([
-		activeRegion.map(
-			(region) => `https://restcountries.com/v3.1/region/${region}`
-		),
-	]);
 	const [countriesStatus, setCountriesStatus] = useState(["independent"]);
 	const [country, setCountry] = useState([]);
 
@@ -36,34 +31,55 @@ export default function Home() {
 		const fetchData = async () => {
 			try {
 				const res = await fetch(
-					"https://restcountries.com/v3.1/region/asia"
+					"https://restcountries.com/v3.1/all?fields=name,flags,population,area,region,unMember,independent,"
 				);
 				const data = await res.json();
-				setCountry(data);
+				const sortData = (data, key, isNumeric = false) => {
+					return [...data].sort((a, b) =>
+						isNumeric
+							? b[key] - a[key]
+							: a[key]?.common.localeCompare(b[key]?.common)
+					);
+				};
+
+				const filteredData = data.filter((item) => {
+					const matchesRegion = activeRegion.includes(
+						item.region.toLowerCase()
+					);
+
+					const matchesStatus =
+						(countriesStatus.includes("unMember") &&
+							item.unMember === true) ||
+						(countriesStatus.includes("independent") &&
+							item.independent === true);
+
+					return matchesRegion && matchesStatus;
+				});
+
+				const sortedData = (() => {
+					switch (selectedOption) {
+						case "population":
+							return sortData(filteredData, "population", true);
+						case "area":
+							return sortData(filteredData, "area", true);
+						default:
+							return sortData(filteredData, "name");
+					}
+				})();
+
+				setCountry(sortedData);
 			} catch (err) {
 				console.log("Error: ", err);
 			}
 		};
 		fetchData();
-	}, []);
+	}, [selectedOption, activeRegion, countriesStatus]);
 
 	const handleActiveRegion = (region) => {
 		setActiveRegion((prevRegion) =>
 			prevRegion.includes(region)
 				? prevRegion.filter((item) => item !== region)
 				: [...prevRegion, region]
-		);
-		setActiveRegionUrls((prevUrls) =>
-			prevUrls.includes(`https://restcountries.com/v3.1/region/${region}`)
-				? prevUrls.filter(
-						(item) =>
-							item !==
-							`https://restcountries.com/v3.1/region/${region}`
-				  )
-				: [
-						...prevUrls,
-						`https://restcountries.com/v3.1/region/${region}`,
-				  ]
 		);
 	};
 
@@ -178,7 +194,7 @@ export default function Home() {
 							onClick={() => handleCountriesStatus("unMember")}
 						>
 							<span
-								className={`border-2 border-whiteTheme rounded-md ${
+								className={`border-2 rounded-md ${
 									countriesStatus.includes("unMember")
 										? "bg-blueTheme border-blueTheme"
 										: "border-whiteTheme [&>img]:opacity-0"
@@ -219,7 +235,7 @@ export default function Home() {
 					<div>
 						<table className="text-left text-whiteTheme [&>thead>tr>th]:py-1 [&>tbody>tr>td]:py-2 ">
 							<thead className="text-grayTheme text-xs">
-								<tr className="[&>th:not(:first-child)]:min-w-[150px]">
+								<tr className="[&>th:not(:first-child)]:min-w-[160px]">
 									<th className="min-w-[100px]">Flag</th>
 									<th>Name</th>
 									<th>Populations</th>
@@ -231,9 +247,9 @@ export default function Home() {
 									<tr key={item.name.common.toLowerCase()}>
 										<td>
 											<img
-												src={item.flags.svg}
+												src={item.flags.png}
 												alt={item.flags.alt}
-												className="w-[50px] rounded-md"
+												className="w-[60px] h-[40px] rounded-md"
 											/>
 										</td>
 										<td>{item.name.common}</td>
