@@ -1,5 +1,5 @@
 "use client";
-import { useRef, useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import {
 	Listbox,
 	ListboxButton,
@@ -15,7 +15,7 @@ export default function Home() {
 		"africa",
 		"asia",
 		"europe",
-		"ocenia",
+		"oceania",
 	];
 	const [activeRegion, setActiveRegion] = useState([
 		"americas",
@@ -25,15 +25,17 @@ export default function Home() {
 	]);
 	const [selectedOption, setSelectedOption] = useState(optionList[0]);
 	const [countriesStatus, setCountriesStatus] = useState(["independent"]);
+	const [searchTerm, setSearchTerm] = useState("");
 	const [country, setCountry] = useState([]);
 
 	useEffect(() => {
 		const fetchData = async () => {
 			try {
 				const res = await fetch(
-					"https://restcountries.com/v3.1/all?fields=name,flags,population,area,region,unMember,independent,"
+					"https://restcountries.com/v3.1/all?fields=name,flags,population,area,region,unMember,independent"
 				);
 				const data = await res.json();
+
 				const sortData = (data, key, isNumeric = false) => {
 					return [...data].sort((a, b) =>
 						isNumeric
@@ -44,14 +46,21 @@ export default function Home() {
 
 				const filteredData = data.filter((item) => {
 					const matchesRegion = activeRegion.includes(
-						item.region.toLowerCase()
+						item.region?.toLowerCase()
 					);
 
+					const isExcludedStatus =
+						item.independent === false && item.unMember === false;
+
 					const matchesStatus =
-						(countriesStatus.includes("unMember") &&
-							item.unMember === true) ||
-						(countriesStatus.includes("independent") &&
-							item.independent === true);
+						isExcludedStatus ||
+						countriesStatus.some((status) => {
+							if (status === "unMember")
+								return item.unMember === true;
+							if (status === "independent")
+								return item.independent === true;
+							return false;
+						});
 
 					return matchesRegion && matchesStatus;
 				});
@@ -67,13 +76,24 @@ export default function Home() {
 					}
 				})();
 
-				setCountry(sortedData);
+				const searchFilteredData = sortedData.filter((item) => {
+					const nameMatch = item.name.common
+						.toLowerCase()
+						.includes(searchTerm.toLowerCase());
+					const regionMatch = item.region
+						?.toLowerCase()
+						.includes(searchTerm.toLowerCase());
+					return nameMatch || regionMatch;
+				});
+
+				setCountry(searchFilteredData);
 			} catch (err) {
-				console.log("Error: ", err);
+				console.error("Error fetching data:", err);
 			}
 		};
+
 		fetchData();
-	}, [selectedOption, activeRegion, countriesStatus]);
+	}, [selectedOption, activeRegion, countriesStatus, searchTerm]);
 
 	const handleActiveRegion = (region) => {
 		setActiveRegion((prevRegion) =>
@@ -110,7 +130,9 @@ export default function Home() {
 			/>
 			<section className="relative mx-4 mt-36 mb-20 bg-blackTheme rounded-xl border border-blackTheme2 py-6 px-4 ">
 				<div className="flex flex-col gap-4 ">
-					<h1 className="text-whiteTheme ">Found 234 countries</h1>
+					<h1 className="text-whiteTheme ">
+						Found {country.length} countries
+					</h1>
 
 					{/* search country box */}
 					<label
@@ -124,10 +146,12 @@ export default function Home() {
 							className="w-full bg-transparent border-0 focus:outline-none focus:placeholder:opacity-0 text-sm text-whiteTheme placeholder:text-grayTheme "
 							id="searchCountry"
 							autoComplete="off"
+							value={searchTerm}
+							onChange={(e) => setSearchTerm(e.target.value)}
 						/>
 					</label>
 				</div>
-				<div className="grid">
+				<div className="grid grid-cols-1">
 					{/* dropdown */}
 					<div className="grid gap-y-2 mt-8">
 						<p className="text-grayTheme text-xs font-semibold">
@@ -163,7 +187,7 @@ export default function Home() {
 					</div>
 
 					{/* region category */}
-					<div className="mt-8 grid gap-y-2 ">
+					<div className="mt-8 grid gap-y-2">
 						<p className="text-grayTheme text-xs font-semibold">
 							Region
 						</p>
@@ -233,32 +257,44 @@ export default function Home() {
 
 					{/* country list */}
 					<div className="mt-8">
-						<table className="text-left text-whiteTheme [&>thead>tr>th]:py-4 [&>tbody>tr>td]:py-3 ">
+						<table className="table-fixed w-full text-left text-whiteTheme [&>thead>tr>th]:py-4 [&>tbody>tr>td]:py-3 ">
 							<thead className="text-grayTheme text-xs border-b-2 border-blackTheme2 ">
-								<tr className="[&>th:not(:first-child)]:min-w-[160px]">
-									<th className="min-w-[100px]">Flag</th>
+								<tr>
+									<th>Flag</th>
 									<th>Name</th>
 									<th>Populations</th>
 									<th>Area</th>
 								</tr>
 							</thead>
 							<tbody>
-								{country.map((item) => (
-									<tr key={item.name.common.toLowerCase()}>
-										<td>
-											<img
-												src={item.flags.png}
-												alt={item.flags.alt}
-												className="w-[60px] h-[40px] rounded-md"
-											/>
-										</td>
-										<td>{item.name.common}</td>
-										<td>
-											{formattedNumber(item.population)}
-										</td>
-										<td>{formattedNumber(item.area)}</td>
+								{country.length === 0 ? (
+									<tr>
+										<td>No country found</td>
 									</tr>
-								))}
+								) : (
+									country.map((item) => (
+										<tr
+											key={item.name.common.toLowerCase()}
+										>
+											<td>
+												<img
+													src={item.flags.png}
+													alt={item.flags.alt}
+													className="w-[60px] h-[40px] rounded-md"
+												/>
+											</td>
+											<td>{item.name.common}</td>
+											<td>
+												{formattedNumber(
+													item.population
+												)}
+											</td>
+											<td>
+												{formattedNumber(item.area)}
+											</td>
+										</tr>
+									))
+								)}
 							</tbody>
 						</table>
 					</div>
