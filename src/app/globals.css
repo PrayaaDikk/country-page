@@ -19,3 +19,7 @@ select option {
   overflow: hidden;
   text-overflow: ellipsis;
 }
+
+@theme {
+  --breakpoint-xs: 480px;
+}
