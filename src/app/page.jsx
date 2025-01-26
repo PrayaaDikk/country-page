@@ -96,7 +96,7 @@ export default function Home() {
 	};
 
 	return (
-		<div className="relative overflow-x-hidden overflow-y-scroll h-[1000px]">
+		<div className="relative overflow-x-hidden overflow-y-scroll">
 			<img
 				src="resources/hero-image.jpg"
 				alt="hero-background"
@@ -108,7 +108,7 @@ export default function Home() {
 				alt="logo"
 				className="absolute top-0 left-1/2 -translate-x-1/2 my-10"
 			/>
-			<section className="relative mx-4 mt-36 mb-20 bg-blackTheme rounded-xl border border-blackTheme2 pt-6 px-2 ">
+			<section className="relative mx-4 mt-36 mb-20 bg-blackTheme rounded-xl border border-blackTheme2 py-6 px-4 ">
 				<div className="flex flex-col gap-4 ">
 					<h1 className="text-whiteTheme ">Found 234 countries</h1>
 
@@ -232,9 +232,9 @@ export default function Home() {
 					</div>
 
 					{/* country list */}
-					<div>
-						<table className="text-left text-whiteTheme [&>thead>tr>th]:py-1 [&>tbody>tr>td]:py-2 ">
-							<thead className="text-grayTheme text-xs">
+					<div className="mt-8">
+						<table className="text-left text-whiteTheme [&>thead>tr>th]:py-4 [&>tbody>tr>td]:py-3 ">
+							<thead className="text-grayTheme text-xs border-b-2 border-blackTheme2 ">
 								<tr className="[&>th:not(:first-child)]:min-w-[160px]">
 									<th className="min-w-[100px]">Flag</th>
 									<th>Name</th>
