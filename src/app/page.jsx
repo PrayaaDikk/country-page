@@ -174,7 +174,7 @@ export default function Home() {
 						htmlFor="searchCountry"
 						className="p-2 flex gap-2 bg-blackTheme2 rounded-xl"
 					>
-						<img src="resources/search.svg" alt="search-icon" />
+						<img src="resources/Search.svg" alt="search-icon" />
 						<input
 							type="text"
 							placeholder="Search by Name, Region..."
