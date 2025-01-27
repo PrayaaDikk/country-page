@@ -27,9 +27,11 @@ export default function Home() {
 	const [countriesStatus, setCountriesStatus] = useState(["independent"]);
 	const [searchTerm, setSearchTerm] = useState("");
 	const [country, setCountry] = useState([]);
+	const [isLoading, setIsLoading] = useState(false);
 
 	useEffect(() => {
 		const fetchData = async () => {
+			setIsLoading(true);
 			try {
 				const res = await fetch(
 					"https://restcountries.com/v3.1/all?fields=name,flags,population,area,region,unMember,independent"
@@ -49,20 +51,31 @@ export default function Home() {
 						item.region?.toLowerCase()
 					);
 
-					const isExcludedStatus =
-						item.independent === false && item.unMember === false;
+					const isUnMemberActive =
+						countriesStatus.includes("unMember");
+					const isIndependentActive =
+						countriesStatus.includes("independent");
 
-					const matchesStatus =
-						isExcludedStatus ||
-						countriesStatus.some((status) => {
-							if (status === "unMember")
-								return item.unMember === true;
-							if (status === "independent")
-								return item.independent === true;
-							return false;
-						});
-
-					return matchesRegion && matchesStatus;
+					if (isUnMemberActive && isIndependentActive) {
+						return (
+							matchesRegion &&
+							item.unMember === true &&
+							item.independent === true
+						);
+					} else if (isUnMemberActive || isIndependentActive) {
+						return (
+							matchesRegion &&
+							(isUnMemberActive
+								? item.unMember === true
+								: item.independent === true)
+						);
+					} else {
+						return (
+							matchesRegion &&
+							item.unMember === false &&
+							item.independent === false
+						);
+					}
 				});
 
 				const sortedData = (() => {
@@ -89,6 +102,8 @@ export default function Home() {
 				setCountry(searchFilteredData);
 			} catch (err) {
 				console.error("Error fetching data:", err);
+			} finally {
+				setIsLoading(false);
 			}
 		};
 
@@ -128,13 +143,12 @@ export default function Home() {
 				alt="logo"
 				className="absolute top-0 left-1/2 -translate-x-1/2 my-10"
 			/>
-			<section className="relative mx-4 mt-36 mb-20 bg-blackTheme rounded-xl border border-blackTheme2 py-6 px-4 ">
+			<section className="relative mx-2 mt-36 mb-20 bg-blackTheme rounded-xl border border-blackTheme py-6 px-4 shadow-lg ">
 				<div className="flex flex-col gap-4 ">
 					<h1 className="text-whiteTheme ">
 						Found {country.length} countries
 					</h1>
 
-					{/* search country box */}
 					<label
 						htmlFor="searchCountry"
 						className="p-2 flex gap-2 bg-blackTheme2 rounded-xl"
@@ -186,7 +200,6 @@ export default function Home() {
 						</div>
 					</div>
 
-					{/* region category */}
 					<div className="mt-8 grid gap-y-2">
 						<p className="text-grayTheme text-xs font-semibold">
 							Region
@@ -208,7 +221,6 @@ export default function Home() {
 						</div>
 					</div>
 
-					{/* country status */}
 					<div className="grid gap-y-2 mt-8">
 						<p className="text-grayTheme text-xs font-semibold">
 							Status
@@ -255,9 +267,8 @@ export default function Home() {
 						</div>
 					</div>
 
-					{/* country list */}
 					<div className="mt-8">
-						<table className="table-fixed w-full text-left text-whiteTheme [&>thead>tr>th]:py-4 [&>tbody>tr>td]:py-3 ">
+						<table className="table-fixed w-full text-left text-whiteTheme [&>thead>tr>th]:py-4 [&>thead>tr>th]:px-2 [&>tbody>tr>td]:py-3 [&>tbody>tr>td]:px-2 ">
 							<thead className="text-grayTheme text-xs border-b-2 border-blackTheme2 ">
 								<tr>
 									<th>Flag</th>
@@ -267,9 +278,32 @@ export default function Home() {
 								</tr>
 							</thead>
 							<tbody>
-								{country.length === 0 ? (
+								{isLoading ? (
+									Array.from({ length: 5 }).map(
+										(_, index) => (
+											<tr key={index}>
+												<td>
+													<span className="w-[60px] h-[40px] bg-grayTheme rounded-md animate-pulse"></span>
+												</td>
+												<td>
+													<span className="w-[80px] h-[20px] bg-grayTheme rounded-md animate-pulse"></span>
+												</td>
+												<td>
+													<span className="w-[80px] h-[20px] bg-grayTheme rounded-md animate-pulse"></span>
+												</td>
+												<td>
+													<span className="w-[80px] h-[20px] bg-grayTheme rounded-md animate-pulse"></span>
+												</td>
+											</tr>
+										)
+									)
+								) : country.length === 0 ? (
 									<tr>
-										<td>No country found</td>
+										<td colSpan="4">
+											<p className="text-center text-grayTheme py-2 text-sm">
+												No country found
+											</p>
+										</td>
 									</tr>
 								) : (
 									country.map((item) => (
@@ -279,7 +313,10 @@ export default function Home() {
 											<td>
 												<img
 													src={item.flags.png}
-													alt={item.flags.alt}
+													alt={
+														item.flags.alt ||
+														"Country flag"
+													}
 													className="w-[60px] h-[40px] rounded-md"
 												/>
 											</td>
