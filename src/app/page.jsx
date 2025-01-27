@@ -187,7 +187,6 @@ export default function Home() {
 					</label>
 				</div>
 				<div className="grid grid-cols-1">
-					{/* dropdown */}
 					<div className="grid gap-y-2 mt-8">
 						<p className="text-grayTheme text-xs font-semibold">
 							Sort by
