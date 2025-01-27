@@ -30,6 +30,24 @@ export default function Home() {
 	const [isLoading, setIsLoading] = useState(false);
 	const [currentPage, setCurrentPage] = useState(1);
 	const itemPerPage = 10;
+	const [inputSearchPlaceholder, setInputSearchPlaceholder] = useState("");
+
+	useEffect(() => {
+		const updatePlaceholder = () => {
+			if (window.innerWidth < 1024) {
+				setInputSearchPlaceholder("Search by Name, Region...");
+			} else {
+				setInputSearchPlaceholder("Search by Name, Region, Subregion");
+			}
+		};
+
+		updatePlaceholder();
+		window.addEventListener("resize", updatePlaceholder);
+
+		return () => {
+			window.removeEventListener("resize", updatePlaceholder);
+		};
+	}, []);
 
 	useEffect(() => {
 		const fetchData = async () => {
@@ -156,16 +174,16 @@ export default function Home() {
 			<img
 				src="resources/hero-image.jpg"
 				alt="hero-background"
-				className="max-w-none object-center absolute left-1/2 -translate-x-1/2 lg:w-full"
+				className="max-w-none w-[1500px] object-cover object-center absolute left-1/2 -translate-x-1/2"
 			/>
 
 			<img
 				src="resources/Logo.svg"
 				alt="logo"
-				className="absolute top-0 left-1/2 -translate-x-1/2 my-10"
+				className="absolute top-0 left-1/2 -translate-x-1/2 my-10 lg:top-14"
 			/>
-			<section className="relative mx-2 mt-36 mb-20 bg-blackTheme rounded-xl border border-blackTheme py-6 px-4 shadow-lg ">
-				<div className="flex flex-col gap-4 ">
+			<section className="relative mx-2 mt-36 lg:mx-10 lg:mt-64 mb-20 bg-blackTheme rounded-xl border border-blackTheme py-6 px-4 shadow-lg ">
+				<div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
 					<h1 className="text-whiteTheme ">
 						Found {country.length} countries
 					</h1>
@@ -177,8 +195,8 @@ export default function Home() {
 						<img src="resources/Search.svg" alt="search-icon" />
 						<input
 							type="text"
-							placeholder="Search by Name, Region..."
-							className="w-full bg-transparent border-0 focus:outline-none focus:placeholder:opacity-0 text-sm text-whiteTheme placeholder:text-grayTheme "
+							placeholder={inputSearchPlaceholder}
+							className="w-full bg-transparent border-0 focus:outline-none focus:placeholder:opacity-0 text-sm text-whiteTheme placeholder:text-grayTheme md:min-w-[300px]"
 							id="searchCountry"
 							autoComplete="off"
 							value={searchTerm}
