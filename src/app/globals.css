@@ -6,6 +6,9 @@
   --font-beVietnamPro: 'Be Vietnam Pro', sans-serif
 }
 
+html {
+  @apply text-[80%] sm:text-[90%] md:text-[100%];
+}
 
 body {
   color: var(--foreground);
@@ -13,13 +16,10 @@ body {
   font-family: var(--font-beVietnamPro);
 }
 
-select option {
-  max-width: 100%;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
+.flag-size {
+  @apply w-[40px] h-[30px] sm:w-[60px] sm:h-[40px]
 }
 
-@theme {
-  --breakpoint-xs: 480px;
+.pagination-button {
+  @apply bg-blackTheme2 text-whiteTheme text-sm px-3 py-2 rounded-xl disabled:bg-transparent disabled:text-blackTheme2;
 }

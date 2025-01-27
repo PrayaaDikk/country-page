@@ -8,8 +8,8 @@ import {
 } from "@headlessui/react";
 
 export default function Home() {
-	const optionList = ["population", "area", "name"];
-	const regionList = [
+	const optionsList = ["population", "area", "name"];
+	const regionsList = [
 		"americas",
 		"antarctic",
 		"africa",
@@ -17,13 +17,13 @@ export default function Home() {
 		"europe",
 		"oceania",
 	];
-	const [activeRegion, setActiveRegion] = useState([
+	const [activeRegions, setActiveRegions] = useState([
 		"americas",
 		"africa",
 		"asia",
 		"europe",
 	]);
-	const [selectedOption, setSelectedOption] = useState(optionList[0]);
+	const [selectedOption, setSelectedOption] = useState(optionsList[0]);
 	const [countriesStatus, setCountriesStatus] = useState(["independent"]);
 	const [searchTerm, setSearchTerm] = useState("");
 	const [country, setCountry] = useState([]);
@@ -49,7 +49,7 @@ export default function Home() {
 				};
 
 				const filteredData = data.filter((item) => {
-					const matchesRegion = activeRegion.includes(
+					const matchesRegion = activeRegions.includes(
 						item.region?.toLowerCase()
 					);
 
@@ -113,7 +113,7 @@ export default function Home() {
 		};
 
 		fetchData();
-	}, [selectedOption, activeRegion, countriesStatus, searchTerm]);
+	}, [selectedOption, activeRegions, countriesStatus, searchTerm]);
 
 	const indexOfLastItem = currentPage * itemPerPage;
 	const indexOfFirstItem = indexOfLastItem - itemPerPage;
@@ -132,7 +132,7 @@ export default function Home() {
 	};
 
 	const handleActiveRegion = (region) => {
-		setActiveRegion((prevRegion) =>
+		setActiveRegions((prevRegion) =>
 			prevRegion.includes(region)
 				? prevRegion.filter((item) => item !== region)
 				: [...prevRegion, region]
@@ -207,7 +207,7 @@ export default function Home() {
 									/>
 								</ListboxButton>
 								<ListboxOptions className="absolute w-full bg-blackTheme2 rounded-xl shadow text-sm text-whiteTheme p-1 mt-1 ">
-									{optionList.map((option, i) => (
+									{optionsList.map((option, i) => (
 										<ListboxOption
 											value={option}
 											key={i}
@@ -226,10 +226,10 @@ export default function Home() {
 							Region
 						</p>
 						<div className="flex flex-wrap gap-4">
-							{regionList.map((region) => (
+							{regionsList.map((region) => (
 								<button
 									className={`px-3 py-2 text-whiteTheme text-sm rounded-xl capitalize ${
-										activeRegion.includes(region)
+										activeRegions.includes(region)
 											? "bg-blackTheme2"
 											: ""
 									} `}
@@ -288,14 +288,14 @@ export default function Home() {
 						</div>
 					</div>
 
-					<div className="mt-8">
-						<table className="table-fixed w-full text-left text-whiteTheme [&>thead>tr>th]:py-4 [&>thead>tr>th]:px-2 [&>tbody>tr>td]:py-3 [&>tbody>tr>td]:px-2 ">
+					<div className="mt-8 min-h-[850px] flex flex-col justify-between">
+						<table className="table-auto w-full text-left text-whiteTheme [&>thead>tr>th]:py-4 [&>thead>tr>th]:px-2 [&>tbody>tr>td]:py-3 [&>tbody>tr>td]:px-2 ">
 							<thead className="text-grayTheme text-xs border-b-2 border-blackTheme2 ">
 								<tr>
 									<th>Flag</th>
 									<th>Name</th>
 									<th>Populations</th>
-									<th>Area</th>
+									<th className="hidden sm:block">Area</th>
 								</tr>
 							</thead>
 							<tbody>
@@ -303,7 +303,7 @@ export default function Home() {
 									Array.from({ length: 10 }).map((_, i) => (
 										<tr key={i}>
 											<td>
-												<span className="w-[60px] h-[40px] bg-grayTheme rounded-md block animate-pulse"></span>
+												<span className="flag-size bg-grayTheme rounded-md block animate-pulse"></span>
 											</td>
 											<td>
 												<span className="w-[80px] h-[20px] bg-grayTheme rounded-md block animate-pulse"></span>
@@ -311,7 +311,7 @@ export default function Home() {
 											<td>
 												<span className="w-[80px] h-[20px] bg-grayTheme rounded-md block animate-pulse"></span>
 											</td>
-											<td>
+											<td className="hidden sm:block">
 												<span className="w-[80px] h-[20px] bg-grayTheme rounded-md block animate-pulse"></span>
 											</td>
 										</tr>
@@ -337,7 +337,7 @@ export default function Home() {
 														item.flags.alt ||
 														"Country flag"
 													}
-													className="w-[60px] h-[40px] rounded-md"
+													className="flag-size rounded-md"
 												/>
 											</td>
 											<td>{item.name.common}</td>
@@ -346,7 +346,7 @@ export default function Home() {
 													item.population
 												)}
 											</td>
-											<td>
+											<td className="hidden sm:block">
 												{formattedNumber(item.area)}
 											</td>
 										</tr>
@@ -356,14 +356,33 @@ export default function Home() {
 						</table>
 						<div className="mt-8 flex items-center justify-between ">
 							<button
-								className="bg-grayTheme text-whiteTheme text-sm px-3 py-2 rounded-xl disabled:bg-blackTheme2"
+								className="pagination-button"
 								onClick={() => handlePagination("prev")}
 								disabled={currentPage === 1}
 							>
 								Previous
 							</button>
+							<div className="flex items-end text-grayTheme gap-x-4">
+								<p
+									className={`text-sm text-blackTheme2 ${
+										currentPage === 1 ? "opacity-0" : ""
+									}`}
+								>
+									{currentPage - 1}
+								</p>
+								<p>{currentPage}</p>
+								<p
+									className={`text-sm text-blackTheme2 ${
+										currentPage === totalPages
+											? "opacity-0"
+											: ""
+									}`}
+								>
+									{currentPage + 1}
+								</p>
+							</div>
 							<button
-								className="bg-grayTheme text-whiteTheme text-sm px-3 py-2 rounded-xl disabled:bg-blackTheme2"
+								className="pagination-button"
 								onClick={() => handlePagination("next")}
 								disabled={currentPage === totalPages}
 							>
