@@ -28,6 +28,8 @@ export default function Home() {
 	const [searchTerm, setSearchTerm] = useState("");
 	const [country, setCountry] = useState([]);
 	const [isLoading, setIsLoading] = useState(false);
+	const [currentPage, setCurrentPage] = useState(1);
+	const itemPerPage = 10;
 
 	useEffect(() => {
 		const fetchData = async () => {
@@ -100,15 +102,34 @@ export default function Home() {
 				});
 
 				setCountry(searchFilteredData);
+				setCurrentPage(1);
 			} catch (err) {
 				console.error("Error fetching data:", err);
 			} finally {
-				setIsLoading(false);
+				setTimeout(() => {
+					setIsLoading(false);
+				}, 1000);
 			}
 		};
 
 		fetchData();
 	}, [selectedOption, activeRegion, countriesStatus, searchTerm]);
+
+	const indexOfLastItem = currentPage * itemPerPage;
+	const indexOfFirstItem = indexOfLastItem - itemPerPage;
+	const currentDataCountries = country.slice(
+		indexOfFirstItem,
+		indexOfLastItem
+	);
+	const totalPages = Math.ceil(country.length / itemPerPage);
+
+	const handlePagination = (direction) => {
+		if (direction == "prev" && currentPage > 1) {
+			setCurrentPage(currentPage - 1);
+		} else if (direction == "next" && currentPage < totalPages) {
+			setCurrentPage(currentPage + 1);
+		}
+	};
 
 	const handleActiveRegion = (region) => {
 		setActiveRegion((prevRegion) =>
@@ -279,25 +300,24 @@ export default function Home() {
 							</thead>
 							<tbody>
 								{isLoading ? (
-									Array.from({ length: 5 }).map(
-										(_, index) => (
-											<tr key={index}>
-												<td>
-													<span className="w-[60px] h-[40px] bg-grayTheme rounded-md animate-pulse"></span>
-												</td>
-												<td>
-													<span className="w-[80px] h-[20px] bg-grayTheme rounded-md animate-pulse"></span>
-												</td>
-												<td>
-													<span className="w-[80px] h-[20px] bg-grayTheme rounded-md animate-pulse"></span>
-												</td>
-												<td>
-													<span className="w-[80px] h-[20px] bg-grayTheme rounded-md animate-pulse"></span>
-												</td>
-											</tr>
-										)
-									)
-								) : country.length === 0 ? (
+									Array.from({ length: 10 }).map((_, i) => (
+										<tr key={i}>
+											<td>
+												<span className="w-[60px] h-[40px] bg-grayTheme rounded-md block animate-pulse"></span>
+											</td>
+											<td>
+												<span className="w-[80px] h-[20px] bg-grayTheme rounded-md block animate-pulse"></span>
+											</td>
+											<td>
+												<span className="w-[80px] h-[20px] bg-grayTheme rounded-md block animate-pulse"></span>
+											</td>
+											<td>
+												<span className="w-[80px] h-[20px] bg-grayTheme rounded-md block animate-pulse"></span>
+											</td>
+										</tr>
+									))
+								) : currentDataCountries.length < 1 &&
+								  !isLoading ? (
 									<tr>
 										<td colSpan="4">
 											<p className="text-center text-grayTheme py-2 text-sm">
@@ -306,7 +326,7 @@ export default function Home() {
 										</td>
 									</tr>
 								) : (
-									country.map((item) => (
+									currentDataCountries.map((item) => (
 										<tr
 											key={item.name.common.toLowerCase()}
 										>
@@ -334,6 +354,22 @@ export default function Home() {
 								)}
 							</tbody>
 						</table>
+						<div className="mt-8 flex items-center justify-between ">
+							<button
+								className="bg-grayTheme text-whiteTheme text-sm px-3 py-2 rounded-xl disabled:bg-blackTheme2"
+								onClick={() => handlePagination("prev")}
+								disabled={currentPage === 1}
+							>
+								Previous
+							</button>
+							<button
+								className="bg-grayTheme text-whiteTheme text-sm px-3 py-2 rounded-xl disabled:bg-blackTheme2"
+								onClick={() => handlePagination("next")}
+								disabled={currentPage === totalPages}
+							>
+								Next
+							</button>
+						</div>
 					</div>
 				</div>
 			</section>
