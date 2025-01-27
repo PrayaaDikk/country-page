@@ -156,7 +156,7 @@ export default function Home() {
 			<img
 				src="resources/hero-image.jpg"
 				alt="hero-background"
-				className="max-w-none object-center absolute left-1/2 -translate-x-1/2"
+				className="max-w-none object-center absolute left-1/2 -translate-x-1/2 lg:w-full"
 			/>
 
 			<img
@@ -186,118 +186,133 @@ export default function Home() {
 						/>
 					</label>
 				</div>
-				<div className="grid grid-cols-1">
-					<div className="grid gap-y-2 mt-8">
-						<p className="text-grayTheme text-xs font-semibold">
-							Sort by
-						</p>
-						<div className="relative">
-							<Listbox
-								value={selectedOption}
-								onChange={setSelectedOption}
-							>
-								<ListboxButton className="w-full px-3 py-2 border-2 border-blackTheme2 rounded-xl flex items-center justify-between ">
-									<p className="text-whiteTheme text-sm capitalize">
-										{selectedOption}
-									</p>
-									<img
-										src="resources/Expand_down.svg"
-										alt="dropdown-icon"
-									/>
-								</ListboxButton>
-								<ListboxOptions className="absolute w-full bg-blackTheme2 rounded-xl shadow text-sm text-whiteTheme p-1 mt-1 ">
-									{optionsList.map((option, i) => (
-										<ListboxOption
-											value={option}
-											key={i}
-											className="block px-3 py-2 cursor-pointer capitalize active:bg-blackTheme rounded-lg"
-										>
-											{option}
-										</ListboxOption>
-									))}
-								</ListboxOptions>
-							</Listbox>
-						</div>
-					</div>
-
-					<div className="mt-8 grid gap-y-2">
-						<p className="text-grayTheme text-xs font-semibold">
-							Region
-						</p>
-						<div className="flex flex-wrap gap-4">
-							{regionsList.map((region) => (
-								<button
-									className={`px-3 py-2 text-whiteTheme text-sm rounded-xl capitalize ${
-										activeRegions.includes(region)
-											? "bg-blackTheme2"
-											: ""
-									} `}
-									key={region}
-									onClick={() => handleActiveRegion(region)}
+				<div className="grid grid-cols-1 lg:grid-cols-3 gap-x-6">
+					<div>
+						<div className="grid gap-y-2 mt-8">
+							<p className="text-grayTheme text-xs font-semibold">
+								Sort by
+							</p>
+							<div className="relative">
+								<Listbox
+									value={selectedOption}
+									onChange={setSelectedOption}
 								>
-									{region}
-								</button>
-							))}
+									<ListboxButton className="w-full px-3 py-2 border-2 border-blackTheme2 rounded-xl flex items-center justify-between ">
+										<p className="text-whiteTheme text-sm capitalize">
+											{selectedOption}
+										</p>
+										<img
+											src="resources/Expand_down.svg"
+											alt="dropdown-icon"
+										/>
+									</ListboxButton>
+									<ListboxOptions className="absolute w-full bg-blackTheme2 rounded-xl shadow text-sm text-whiteTheme p-1 mt-1 ">
+										{optionsList.map((option, i) => (
+											<ListboxOption
+												value={option}
+												key={i}
+												className="block px-3 py-2 cursor-pointer capitalize active:bg-blackTheme rounded-lg"
+											>
+												{option}
+											</ListboxOption>
+										))}
+									</ListboxOptions>
+								</Listbox>
+							</div>
+						</div>
+
+						<div className="mt-8 grid grid-cols-1 gap-y-2">
+							<p className="text-grayTheme text-xs font-semibold">
+								Region
+							</p>
+							<div className="flex flex-wrap gap-4">
+								{regionsList.map((region) => (
+									<button
+										className={`px-3 py-2 text-whiteTheme text-sm rounded-xl capitalize ${
+											activeRegions.includes(region)
+												? "bg-blackTheme2"
+												: ""
+										} `}
+										key={region}
+										onClick={() =>
+											handleActiveRegion(region)
+										}
+									>
+										{region}
+									</button>
+								))}
+							</div>
+						</div>
+
+						<div className="grid grid-cols-1 gap-y-2 mt-8">
+							<p className="text-grayTheme text-xs font-semibold">
+								Status
+							</p>
+							<div
+								className="flex items-center gap-2"
+								onClick={() =>
+									handleCountriesStatus("unMember")
+								}
+							>
+								<span
+									className={`border-2 rounded-md ${
+										countriesStatus.includes("unMember")
+											? "bg-blueTheme border-blueTheme"
+											: "border-whiteTheme [&>img]:opacity-0"
+									}`}
+								>
+									<img src="resources/Done_round.svg" />
+								</span>
+								<label
+									htmlFor="unMemberCheckbox"
+									className="text-whiteTheme text-sm"
+								>
+									Member of the United Nations
+								</label>
+							</div>
+							<div
+								className="flex items-center gap-2"
+								onClick={() =>
+									handleCountriesStatus("independent")
+								}
+							>
+								<span
+									className={`border-2 rounded-md ${
+										countriesStatus.includes("independent")
+											? "bg-blueTheme border-blueTheme"
+											: "border-whiteTheme [&>img]:opacity-0"
+									}`}
+								>
+									<img src="resources/Done_round.svg" />
+								</span>
+								<label
+									htmlFor="independentCheckbox"
+									className="text-whiteTheme text-sm"
+								>
+									Independent
+								</label>
+							</div>
 						</div>
 					</div>
 
-					<div className="grid gap-y-2 mt-8">
-						<p className="text-grayTheme text-xs font-semibold">
-							Status
-						</p>
-						<div
-							className="flex items-center gap-2"
-							onClick={() => handleCountriesStatus("unMember")}
-						>
-							<span
-								className={`border-2 rounded-md ${
-									countriesStatus.includes("unMember")
-										? "bg-blueTheme border-blueTheme"
-										: "border-whiteTheme [&>img]:opacity-0"
-								}`}
-							>
-								<img src="resources/Done_round.svg" />
-							</span>
-							<label
-								htmlFor="unMemberCheckbox"
-								className="text-whiteTheme text-sm"
-							>
-								Member of the United Nations
-							</label>
-						</div>
-						<div
-							className="flex items-center gap-2"
-							onClick={() => handleCountriesStatus("independent")}
-						>
-							<span
-								className={`border-2 rounded-md ${
-									countriesStatus.includes("independent")
-										? "bg-blueTheme border-blueTheme"
-										: "border-whiteTheme [&>img]:opacity-0"
-								}`}
-							>
-								<img src="resources/Done_round.svg" />
-							</span>
-							<label
-								htmlFor="independentCheckbox"
-								className="text-whiteTheme text-sm"
-							>
-								Independent
-							</label>
-						</div>
-					</div>
-
-					<div className="mt-8 min-h-[850px] flex flex-col justify-between">
-						<table className="table-auto w-full text-left text-whiteTheme [&>thead>tr>th]:py-4 [&>thead>tr>th]:px-2 [&>tbody>tr>td]:py-3 [&>tbody>tr>td]:px-2 ">
+					<div
+						className={`${
+							currentDataCountries.length > 0
+								? "min-h-[535px]"
+								: ""
+						} mt-8 flex flex-col justify-between lg:col-span-2`}
+					>
+						<table className="table-fixed w-full text-left text-whiteTheme [&>thead>tr>th]:py-4 [&>thead>tr>th]:px-2 [&>tbody>tr>td]:py-3 [&>tbody>tr>td]:px-2 ">
 							<thead className="text-grayTheme text-xs border-b-2 border-blackTheme2 ">
 								<tr>
 									<th>Flag</th>
 									<th>Name</th>
 									<th>Populations</th>
-									<th className="hidden sm:block">Area</th>
+									<th>Area (Km²)</th>
+									<th className="max-lg:hidden">Region</th>
 								</tr>
 							</thead>
-							<tbody>
+							<tbody className="text-sm sm:text-base">
 								{isLoading ? (
 									Array.from({ length: 10 }).map((_, i) => (
 										<tr key={i}>
@@ -305,13 +320,16 @@ export default function Home() {
 												<span className="flag-size bg-grayTheme rounded-md block animate-pulse"></span>
 											</td>
 											<td>
-												<span className="w-[80px] h-[20px] bg-grayTheme rounded-md block animate-pulse"></span>
+												<span className="w-[80px] h-[10px] bg-grayTheme rounded-md block animate-pulse"></span>
 											</td>
 											<td>
-												<span className="w-[80px] h-[20px] bg-grayTheme rounded-md block animate-pulse"></span>
+												<span className="w-[80px] h-[10px] bg-grayTheme rounded-md block animate-pulse"></span>
 											</td>
-											<td className="hidden sm:block">
-												<span className="w-[80px] h-[20px] bg-grayTheme rounded-md block animate-pulse"></span>
+											<td>
+												<span className="w-[80px] h-[10px] bg-grayTheme rounded-md block animate-pulse"></span>
+											</td>
+											<td className="max-lg:hidden">
+												<span className="w-[80px] h-[10px] bg-grayTheme rounded-md block animate-pulse"></span>
 											</td>
 										</tr>
 									))
@@ -345,15 +363,22 @@ export default function Home() {
 													item.population
 												)}
 											</td>
-											<td className="hidden sm:block">
+											<td>
 												{formattedNumber(item.area)}
+											</td>
+											<td className="max-lg:hidden">
+												{item.region}
 											</td>
 										</tr>
 									))
 								)}
 							</tbody>
 						</table>
-						<div className="mt-8 flex items-center justify-between ">
+						<div
+							className={`${
+								currentDataCountries.length > 0 ? "" : "hidden"
+							} mt-8 flex items-center justify-between `}
+						>
 							<button
 								className="pagination-button"
 								onClick={() => handlePagination("prev")}
