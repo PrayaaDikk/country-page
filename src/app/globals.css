@@ -17,7 +17,7 @@ body {
 }
 
 .flag-size {
-  @apply w-[40px] h-[30px] sm:w-[60px] sm:h-[40px]
+  @apply max-w-[40px] h-[30px] sm:max-w-[60px] sm:h-[40px]
 }
 
 .pagination-button {

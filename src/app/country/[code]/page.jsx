@@ -2,17 +2,12 @@
 import { useParams } from "next/navigation";
 import { useEffect, useState } from "react";
 import DetailsList from "./_components/DetailsList";
+import LoadingData from "./_components/LoadingData";
 
 export default function Details() {
 	const { code } = useParams();
 	const [country, setCountry] = useState(null);
-	const details = [
-		"Capital",
-		"Subregion",
-		"Language",
-		"Currencies",
-		"Continents",
-	];
+	const [neighbours, setNeighbours] = useState([]);
 
 	useEffect(() => {
 		const fetchData = async () => {
@@ -26,7 +21,13 @@ export default function Details() {
 					setCountry(null);
 					return;
 				}
+				const res2 = await fetch(
+					`https://restcountries.com/v3.1/subregion/${data[0].subregion}`
+				);
+				const data2 = await res2.json();
+
 				setCountry(data[0]);
+				setNeighbours(data2);
 			} catch (error) {
 				console.error("Error fetching country data:", error);
 				setCountry(null);
@@ -36,7 +37,6 @@ export default function Details() {
 		if (code) fetchData();
 	}, [code]);
 
-	// Fallback jika data belum tersedia
 	if (!code) {
 		return (
 			<p className="text-center text-whiteTheme">Invalid Country Code</p>
@@ -44,10 +44,9 @@ export default function Details() {
 	}
 
 	if (!country) {
-		return <p className="text-center text-whiteTheme">Loading...</p>;
+		return <LoadingData />;
 	}
 
-	// Format angka
 	const formattedNumber = (number) => {
 		return new Intl.NumberFormat("en-US").format(number);
 	};
@@ -65,7 +64,7 @@ export default function Details() {
 				alt="logo"
 				className="absolute top-0 left-1/2 -translate-x-1/2 my-10 lg:top-14"
 			/>
-			<section className="relative mt-36 lg:mt-64 mb-20 bg-blackTheme border border-blackTheme py-6 px-4 shadow-lg text-whiteTheme ">
+			<section className="relative mt-36 lg:mt-64 mb-20 bg-blackTheme border border-blackTheme py-6 px-4 shadow-2xl text-whiteTheme max-w-[640px] mx-auto">
 				<img
 					src={country.flags?.png}
 					alt={country.flags?.alt || "Country flag"}
@@ -92,7 +91,7 @@ export default function Details() {
 					</div>
 				</div>
 				<div className="mt-8">
-					<div className="border-y border-blackTheme2 text-grayTheme font-semibold">
+					<div className="border-y border-blackTheme2 text-grayTheme">
 						<DetailsList
 							name="Capital"
 							value={country.capital}
@@ -129,6 +128,37 @@ export default function Details() {
 							name="Continents"
 							value={country.continents}
 						/>
+					</div>
+				</div>
+				<div className="mt-4">
+					<h2>Neighbouring Countries</h2>
+					<div className="flex items-start flex-wrap gap-6 mt-4">
+						{neighbours.map(
+							(neighbour) =>
+								neighbour.cca2 !== country.cca2 && (
+									<span
+										key={neighbour.cca2}
+										onClick={() =>
+											(window.location.href = `/country/${neighbour.cca2}`)
+										}
+										className="cursor-pointer"
+									>
+										<div className="flex flex-col items-center">
+											<img
+												src={neighbour.flags?.png}
+												alt={
+													neighbour.flags.alt ||
+													"country-flag"
+												}
+												className="rounded-md max-w-[60px] h-[40px]"
+											/>
+											<h3 className="mt-4 text-xs text-center max-w-[100px]">
+												{neighbour.name?.common}
+											</h3>
+										</div>
+									</span>
+								)
+						)}
 					</div>
 				</div>
 			</section>

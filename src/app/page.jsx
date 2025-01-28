@@ -6,6 +6,7 @@ import {
 	ListboxOptions,
 	ListboxOption,
 } from "@headlessui/react";
+import { Router } from "next/router";
 
 export default function Home() {
 	const optionsList = ["population", "area", "name"];
@@ -54,7 +55,7 @@ export default function Home() {
 			setIsLoading(true);
 			try {
 				const res = await fetch(
-					"https://restcountries.com/v3.1/all?fields=name,flags,population,area,region,subregion,unMember,independent"
+					"https://restcountries.com/v3.1/all?fields=name,flags,population,area,region,subregion,unMember,independent,cca2"
 				);
 				const data = await res.json();
 
@@ -363,8 +364,8 @@ export default function Home() {
 								) : currentDataCountries.length < 1 &&
 								  !isLoading ? (
 									<tr>
-										<td colSpan="4">
-											<p className="text-center text-grayTheme py-2 text-sm">
+										<td>
+											<p className="text-grayTheme py-2 text-sm">
 												No country found
 											</p>
 										</td>
@@ -373,6 +374,10 @@ export default function Home() {
 									currentDataCountries.map((item) => (
 										<tr
 											key={item.name.common.toLowerCase()}
+											onClick={() =>
+												(window.location.href = `/country/${item.cca2}`)
+											}
+											className="cursor-pointer active:bg-blackTheme2 lg:hover:bg-blackTheme2"
 										>
 											<td>
 												<img
