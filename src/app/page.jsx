@@ -54,7 +54,7 @@ export default function Home() {
 			setIsLoading(true);
 			try {
 				const res = await fetch(
-					"https://restcountries.com/v3.1/all?fields=name,flags,population,area,region,unMember,independent"
+					"https://restcountries.com/v3.1/all?fields=name,flags,population,area,region,subregion,unMember,independent"
 				);
 				const data = await res.json();
 
@@ -116,7 +116,10 @@ export default function Home() {
 					const regionMatch = item.region
 						?.toLowerCase()
 						.includes(searchTerm.toLowerCase());
-					return nameMatch || regionMatch;
+					const subRegionMatch = item.subregion
+						?.toLowerCase()
+						.includes(searchTerm.toLowerCase());
+					return nameMatch || regionMatch || subRegionMatch;
 				});
 
 				setCountry(searchFilteredData);
@@ -172,13 +175,13 @@ export default function Home() {
 	return (
 		<div className="relative overflow-x-hidden overflow-y-scroll">
 			<img
-				src="resources/hero-image.jpg"
+				src="/resources/hero-image.jpg"
 				alt="hero-background"
-				className="max-w-none w-[1500px] object-cover object-center absolute left-1/2 -translate-x-1/2"
+				className="max-w-none w-[1500px] 2xl:w-full object-cover object-center absolute left-1/2 -translate-x-1/2"
 			/>
 
 			<img
-				src="resources/Logo.svg"
+				src="/resources/Logo.svg"
 				alt="logo"
 				className="absolute top-0 left-1/2 -translate-x-1/2 my-10 lg:top-14"
 			/>
@@ -328,6 +331,9 @@ export default function Home() {
 									<th>Populations</th>
 									<th>Area (Km²)</th>
 									<th className="max-lg:hidden">Region</th>
+									<th className="max-lg:hidden">
+										Sub Region
+									</th>
 								</tr>
 							</thead>
 							<tbody className="text-sm sm:text-base">
@@ -344,6 +350,9 @@ export default function Home() {
 												<span className="w-[80px] h-[10px] bg-grayTheme rounded-md block animate-pulse"></span>
 											</td>
 											<td>
+												<span className="w-[80px] h-[10px] bg-grayTheme rounded-md block animate-pulse"></span>
+											</td>
+											<td className="max-lg:hidden">
 												<span className="w-[80px] h-[10px] bg-grayTheme rounded-md block animate-pulse"></span>
 											</td>
 											<td className="max-lg:hidden">
@@ -387,6 +396,15 @@ export default function Home() {
 											<td className="max-lg:hidden">
 												{item.region}
 											</td>
+											{item.subregion ? (
+												<td className="max-lg:hidden">
+													{item.subregion}
+												</td>
+											) : (
+												<td className="max-xl:hidden text-blackTheme2">
+													None
+												</td>
+											)}
 										</tr>
 									))
 								)}

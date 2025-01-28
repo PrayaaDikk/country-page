@@ -16,7 +16,7 @@ export default function RootLayout({ children }) {
 	return (
 		<html lang="en" className="bg-blackTheme">
 			<body
-				className={`${beVietnamPro.variable} antialiased font-medium `}
+				className={`${beVietnamPro.variable} antialiased font-medium`}
 			>
 				{children}
 			</body>

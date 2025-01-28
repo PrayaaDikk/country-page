@@ -23,3 +23,7 @@ body {
 .pagination-button {
   @apply bg-blackTheme2 text-whiteTheme text-sm px-3 py-2 rounded-xl disabled:bg-transparent disabled:text-blackTheme2;
 }
+
+.badge-maybe {
+  @apply px-3 py-1 sm:px-4 text-xs sm:py-2 flex items-center gap-x-4 bg-blackTheme2 sm:text-sm rounded-xl;
+}
