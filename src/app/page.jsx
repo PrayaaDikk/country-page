@@ -283,7 +283,10 @@ export default function Home() {
 											: "border-whiteTheme [&>img]:opacity-0"
 									}`}
 								>
-									<img src="resources/Done_round.svg" />
+									<img
+										src="resources/Done_round.svg"
+										alt="done-round"
+									/>
 								</span>
 								<label
 									htmlFor="unMemberCheckbox"
@@ -305,7 +308,10 @@ export default function Home() {
 											: "border-whiteTheme [&>img]:opacity-0"
 									}`}
 								>
-									<img src="resources/Done_round.svg" />
+									<img
+										src="resources/Done_round.svg"
+										alt="done-round"
+									/>
 								</span>
 								<label
 									htmlFor="independentCheckbox"
